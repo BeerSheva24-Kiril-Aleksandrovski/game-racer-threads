@@ -20,11 +20,9 @@ public class Racer extends Thread {
     @Override
     public void run() {
         int i = 1;
-        boolean isFinished = lastIteration.get() == race.getDistance();
-        while (i <= race.getDistance() && !isFinished) {
+        while (i <= race.getDistance() && !(lastIteration.get() == race.getDistance())) {
             try {
                 sleep(Race.getSleepTime());
-
                 if (i > lastIteration.get()) {
                     lastIteration.set(i);
                     winner.set(number);

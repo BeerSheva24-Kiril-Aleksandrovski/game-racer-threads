@@ -21,6 +21,8 @@ public class MenuItems {
         startRacers(racers, race);
         waitRaceFinishing(racers);
         System.out.println("Racer number " + Racer.getWinner()+" - WIN!");
+        System.out.println("Thanks you for using app,bye!");
+        System.exit(0);
 	}
 
     private static void waitRaceFinishing(Racer[] racers) {
