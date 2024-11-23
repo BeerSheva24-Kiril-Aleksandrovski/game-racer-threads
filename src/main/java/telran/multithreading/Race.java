@@ -1,22 +1,39 @@
 package telran.multithreading;
 
-import java.util.Random;
-import static telran.multithreading.RaceConfig.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 public class Race {
-    
     private int distance;
+    private int minSleep;
+    private int maxSleep;
+    AtomicInteger winner = new AtomicInteger(-1);
+    private long startTime = System.nanoTime();
 
-    public Race(int distance) {
+
+    public Race(int distance, int minSleep, int maxSleep) {
         this.distance = distance;
+        this.minSleep = minSleep;
+        this.maxSleep = maxSleep;
+    }
+
+    public int getWinner() {
+        return winner.get();
     }
 
     public int getDistance() {
         return distance;
     }
 
-    public static long getSleepTime() {
-        Random random = new Random();
-        return random.nextInt(MAX_SLEEP_TIMEOUT - MIN_SLEEP_TIMEOUT) + MIN_SLEEP_TIMEOUT;
+    public int getMinSleep() {
+        return minSleep;
+    }
+
+    public int getMaxSleep() {
+        return maxSleep;
+    }
+
+    public long getStartTime() {
+        return startTime;
     }
 }

@@ -1,37 +1,40 @@
 package telran.multithreading;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
 
 public class Racer extends Thread {
     private Race race;
     private int number;
-    private static AtomicInteger lastIteration = new AtomicInteger(0);
-    private static AtomicInteger winner = new AtomicInteger();
+    private long endTime;
 
     public Racer(Race race, int number) {
         this.race = race;
         this.number = number;
     }
 
-    public static int getWinner() {
-        return winner.get();
-    }
-
     @Override
     public void run() {
-        int i = 1;
-        while (i <= race.getDistance() && !(lastIteration.get() == race.getDistance())) {
+        int minSleep = race.getMinSleep();
+        int maxSleep = race.getMaxSleep();
+        int distance = race.getDistance();
+        Random random = new Random();
+        for (int i = 0; i < distance; i++) {
             try {
-                sleep(Race.getSleepTime());
-                if (i > lastIteration.get()) {
-                    lastIteration.set(i);
-                    winner.set(number);
-                    System.out.println("Racer number "+ number + " is leading on the "+ i +" lap!");
-                }
-                i++;
+                sleep(random.nextInt(minSleep, maxSleep + 1));
+                System.out.printf("%d - step %d\n", number, i);
             } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
+        race.winner.compareAndSet(-1, number);
+        endTime = System.nanoTime();
     }
+
+    public long getEndTime(){
+        return endTime;
+    }
+
+    public int getNumber() {
+        return this.number;
+    }
+
 }
