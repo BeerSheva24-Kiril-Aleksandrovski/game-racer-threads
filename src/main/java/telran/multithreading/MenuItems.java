@@ -4,9 +4,10 @@ import telran.view.InputOutput;
 import telran.view.Item;
 import static telran.multithreading.RaceConfig.*;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.stream.IntStream;
 
 public class MenuItems {
     public static Item[] getItems() {
@@ -23,16 +24,11 @@ public class MenuItems {
                 MIN_THREADS, MAX_THREADS).intValue();
         int distance = io.readNumberRange("Enter distance",
                 "Wrong Distance", MIN_DISTANCE, MAX_DISTANCE).intValue();
-        Race race = new Race(distance, MIN_SLEEP, MAX_SLEEP);
+        Race race = new Race(distance, MIN_SLEEP, MAX_SLEEP, new ArrayList<Racer>(), Instant.now());
         Racer[] racers = new Racer[nThreads];
         startRacers(racers, race);
         joinRacers(racers);
-        printRacersTable(race, racers);
-        displayWinner(race);
-    }
-
-    private static void displayWinner(Race race) {
-        System.out.printf("\nCongratulations to Racer #%d !!\n",race.getWinner());
+        printRacersTable(race);
     }
 
     private static void joinRacers(Racer[] racers) {
@@ -52,36 +48,20 @@ public class MenuItems {
         }
     }
 
-    private static void printRacersTable(Race race, Racer[] racers){
-        long startTime = race.getStartTime();
-        long endTime;
-        List<RaceResult> results = new ArrayList<>();
-        for (int i = 0; i < racers.length; i++) {
-            endTime =  racers[i].getEndTime();
-            double racerTime = (endTime - startTime)/ 1_000_000.0; 
-            results.add(new RaceResult(racers[i].getNumber(),racerTime));
-        }
-
-        /*
-         * This comment used to create Racer#11 with the same time as
-         * already presented by another Racer
-         * As the result will be two Racers on the 10th place
-         */
-
-        // endTime =  racers[5].getEndTime();
-        // double racerTime = (endTime - startTime)/ 1_000_000.0; 
-        // results.add(new RaceResult(11,racerTime));
-        
-        results.sort(Comparator.comparingDouble(RaceResult::getTime));
-        System.out.println("\nFinal Scoreboard:");
-        double lastTime = -1;
-        int position = 0;        
-        for (RaceResult result : results) {
-            if (result.getTime() != lastTime) {     //increasing position only in case if presented time is differs
-                position++;                         //to current Racer's time
-            }
-            System.out.printf("On the %d place Racer #%s finished in %.3f milliseconds.\n",position, result.getNumber(),result.getTime());
-            lastTime = result.getTime();
-        }
-    }
+    private static void printRacersTable(Race race) {
+		System.out.println("place\tracer number\ttime");
+		ArrayList<Racer> resultsTable = race.getResultsTable();
+		IntStream.range(0, resultsTable.size()).mapToObj(i ->  toPrintedString(i, race))
+		.forEach(System.out::println);
+		
+		
+		
+		
+	}
+    
+	private static String toPrintedString(int index, Race race) {
+		Racer runner = race.getResultsTable().get(index);
+		return String.format("%3d\t%7d\t\t%d", index + 1, runner.getNumber(),
+				ChronoUnit.MILLIS.between(race.getStartTime(), runner.getFinishTime()));
+	}
 }
