@@ -3,6 +3,7 @@ package telran.multithreading;
 import java.time.Instant;
 import java.util.Random;
 
+
 public class Racer extends Thread {
     private Race race;
     private int number;
@@ -26,10 +27,13 @@ public class Racer extends Thread {
             } catch (InterruptedException e) {
             }
         }
-        synchronized (race) {
-            finishTime = Instant.now();
-            finishRace();
-        }
+        try {
+            race.lock.lock();
+			finishTime = Instant.now();
+			finishRace();
+		} finally {
+			race.lock.unlock();
+		}
     }
 
     private void finishRace() {

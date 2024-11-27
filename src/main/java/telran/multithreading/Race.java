@@ -2,6 +2,8 @@ package telran.multithreading;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.concurrent.locks.*;
+
 
 public class Race {
     private int distance;
@@ -9,6 +11,8 @@ public class Race {
     private int maxSleep;
     private ArrayList<Racer> resultsTable;
     private Instant startTime;
+    Lock lock = new ReentrantLock(true);
+
 
     public Race(int distance, int minSleep, int maxSleep, ArrayList<Racer> resultsTable, Instant startTime) {
         this.distance = distance;
@@ -21,7 +25,7 @@ public class Race {
     public ArrayList<Racer> getResultsTable() {
 		return resultsTable;
     }
-    
+
     public Instant getStartTime() {
         return startTime;
     }
