@@ -1,22 +1,28 @@
 package telran.multithreading;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Race {
-    private int distance;
-    private int minSleep;
-    private int maxSleep;
-    AtomicInteger winner = new AtomicInteger(-1);
+	private int distance;
+	private int minSleep;
+	private int maxSleep;
+	private ArrayList<Racer> resultsTable;
+	private Instant startTime;
+	Lock lock = new ReentrantLock(true);
+	public Race(int distance, int minSleep, int maxSleep, ArrayList<Racer> resultsTable, Instant startTime) {
+		this.distance = distance;
+		this.minSleep = minSleep;
+		this.maxSleep = maxSleep;
+		this.resultsTable = resultsTable;
+		this.startTime = startTime;
+	}
 
-    public Race(int distance, int minSleep, int maxSleep) {
-        this.distance = distance;
-        this.minSleep = minSleep;
-        this.maxSleep = maxSleep;
-    }
-
-    public int getWinner() {
-        return winner.get();
-    }
+    public ArrayList<Racer> getResultsTable() {
+		return resultsTable;
+	}
 
     public int getDistance() {
         return distance;
@@ -29,5 +35,9 @@ public class Race {
     public int getMaxSleep() {
         return maxSleep;
     }
+
+    public Instant getStartTime() {
+		return startTime;
+	}
 
 }
